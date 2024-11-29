@@ -1,0 +1,275 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <title>Inventory Reminder</title>
+  <style>
+    /* General Reset */
+    body {
+      font-family: Arial, sans-serif;
+      margin: 0;
+      padding: 0;
+      background-color:white;
+      color: #ffffff;
+      padding-top: 120px;
+    }
+
+    .container {
+      max-width: 400px;
+      margin: 20px auto;
+      padding: 20px;
+      background: #1e1e1e;
+      border-radius: 10px;
+      box-shadow: 0 4px 10px rgba(0, 0, 0, 0.3);
+      padding-top:30px;
+    }
+
+    .header {
+      text-align: center;
+      margin-bottom: 20px;
+    }
+
+    h1 {
+      font-size: 16px;
+      line-height: 1.4;
+    }
+
+    .graphic {
+      text-align: center;
+      margin: 20px 0;
+    }
+
+    .icon {
+      width: 60px;
+      margin-bottom: 10px;
+    }
+
+    .progress-bar {
+      width: 80%;
+      height: 8px;
+      background-color: #4b4b4b;
+      margin: 10px auto;
+      border-radius: 4px;
+      position: relative;
+    }
+
+    .progress {
+      width: 50%;
+      height: 100%;
+      background-color: #32d74b;
+      border-radius: 4px;
+    }
+
+    .toggle-section {
+      margin: 20px 0;
+    }
+
+    .toggle-label {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      font-size: 14px;
+      cursor: pointer;
+    }
+
+    .toggle-label input {
+      display: none;
+    }
+
+    .toggle-label .slider {
+      width: 40px;
+      height: 20px;
+      background-color: #4b4b4b;
+      border-radius: 20px;
+      position: relative;
+      transition: background-color 0.3s ease;
+    }
+
+    .toggle-label input:checked + .slider {
+      background-color: #32d74b;
+    }
+
+    .slider::before {
+      content: "";
+      position: absolute;
+      width: 18px;
+      height: 18px;
+      background-color: #ffffff;
+      border-radius: 50%;
+      top: 1px;
+      left: 1px;
+      transition: transform 0.3s ease;
+    }
+
+    input:checked + .slider::before {
+      transform: translateX(20px);
+    }
+
+    .input-section {
+      margin-bottom: 20px;
+    }
+
+    .input-group {
+      margin: 10px 0;
+    }
+
+    .input-group label {
+      font-size: 14px;
+      margin-bottom: 5px;
+      display: block;
+    }
+
+    .input-group input {
+      width: 100%;
+      padding: 10px;
+      background-color: #2c2c2c;
+      border: none;
+      color: #ffffff;
+      border-radius: 5px;
+      font-size: 14px;
+    }
+
+    .save-button {
+  width: 100%;
+  padding: 10px;
+  background-color: #ff8c8c;
+  color: #121212;
+  border: none;
+  border-radius: 5px;
+  font-size: 16px;
+  cursor: pointer;
+  transition: background-color 0.3s ease;
+}
+
+.save-button:hover {
+  background-color: #ff6b6b;
+}
+
+.btn {
+  width: 100%;
+  padding: 10px;
+  background-color: #4CAF50;
+  color: white;
+  font-size: 16px;
+  border-radius: 5px;
+  cursor: pointer;
+  text-decoration: none; /* Remove underline */
+  display: inline-block; /* Make it a block element */
+  text-align: center; /* Center text */
+  margin-top: 10px; /* Add space between Save and Next button */
+}
+
+.next-button:hover {
+  background-color: #28c741;
+}
+
+.next-button:active {
+  background-color: #1f8e2b;  /* Darker shade when button is pressed */
+}
+
+
+
+  </style>
+</head>
+<body>
+  <div class="container">
+    <div class="header">
+      <h1>Do you want to get reminders for your medication?</h1>
+    </div>
+    <div class="graphic">
+      <div class="progress-bar">
+        <div id="progress" class="progress"></div>
+      </div>
+    </div>
+    <div class="toggle-section">
+      <label for="reminder-toggle" class="toggle-label">
+        Remind me
+        <input type="checkbox" id="reminder-toggle" checked>
+        <span class="slider"></span>
+      </label>
+    </div>
+    <div class="input-section">
+      <div class="input-group">
+        <label for="current-inventory">Current inventory</label>
+        <input type="number" id="current-inventory" value="10" oninput="updateProgress()">
+      </div>
+      <div class="input-group">
+        <label for="threshold">Remind me when:</label>
+        <input type="number" id="threshold" value="3">
+      </div>
+    </div>
+    <button class="save-button" onclick="saveSettings()">Save</button>
+    <!-- 'Next' Button placed below Save button -->
+    <a class="btn" href="med.html" id="btn">Next</a>
+    <p id="notification" class="notification"></p>
+  </div>
+
+  <script>
+    function goBack() {
+      alert('Going back!');
+    }
+
+    function updateProgress() {
+      const currentInventory = document.getElementById('current-inventory').value;
+      const progressElement = document.getElementById('progress');
+      const maxInventory = 10; // Example maximum
+      const widthPercentage = (currentInventory / maxInventory) * 100;
+      progressElement.style.width = `${widthPercentage}%`;
+
+      if (currentInventory <= 3) {
+        progressElement.style.backgroundColor = '#ff6b6b';
+      } else {
+        progressElement.style.backgroundColor = '#32d74b';
+      }
+    }
+
+    function saveSettings() {
+      const currentInventory = document.getElementById('current-inventory').value;
+      const threshold = document.getElementById('threshold').value;
+      const isReminderOn = document.getElementById('reminder-toggle').checked;
+
+      // Save settings in localStorage
+      localStorage.setItem('currentInventory', currentInventory);
+      localStorage.setItem('threshold', threshold);
+      localStorage.setItem('isReminderOn', isReminderOn);
+
+      const notification = document.getElementById('notification');
+
+      if (isReminderOn && currentInventory <= threshold) {
+        notification.textContent = 'Reminder: Time to refill your inventory!';
+        notification.style.color = '#ff6b6b';
+      } else {
+        notification.textContent = 'Settings saved successfully!';
+        notification.style.color = '#32d74b';
+      }
+    }
+
+    window.onload = function () {
+      const currentInventory = localStorage.getItem('currentInventory') || 10;
+      const threshold = localStorage.getItem('threshold') || 3;
+      const isReminderOn = localStorage.getItem('isReminderOn') === 'true';
+
+      document.getElementById('current-inventory').value = currentInventory;
+      document.getElementById('threshold').value = threshold;
+      document.getElementById('reminder-toggle').checked = isReminderOn;
+
+      updateProgress();
+    };
+
+    function checkInventoryReminder() {
+      const currentInventory = document.getElementById('current-inventory').value;
+      const threshold = document.getElementById('threshold').value;
+      const isReminderOn = document.getElementById('reminder-toggle').checked;
+
+      if (isReminderOn && currentInventory <= threshold) {
+        const notification = document.getElementById('notification');
+        notification.textContent = 'Reminder: Time to refill your inventory!';
+      }
+    }
+
+    // Periodically check every 5 seconds
+    setInterval(checkInventoryReminder, 5000);
+  </script>
+</body>
+</html>
